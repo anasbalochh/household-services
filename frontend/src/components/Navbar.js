@@ -12,14 +12,14 @@ const Navbar = () => {
           Household Services
         </Typography>
         <Box>
+          <Button color="inherit" onClick={() => navigate('/')}>
+            Home
+          </Button>
           <Button color="inherit" onClick={() => navigate('/login')}>
             Customer/Vendor Login
           </Button>
           <Button color="inherit" onClick={() => navigate('/admin-login')}>
             Admin Login
-          </Button>
-          <Button color="inherit" onClick={() => navigate('/register')}>
-            Register
           </Button>
         </Box>
       </Toolbar>

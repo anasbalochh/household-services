@@ -3,45 +3,23 @@ import { createSlice } from '@reduxjs/toolkit';
 const authSlice = createSlice({
   name: 'auth',
   initialState: {
-    token: localStorage.getItem('token') || null,
-    role: localStorage.getItem('role') || null,
-    userId: localStorage.getItem('userId') || null,
-    name: localStorage.getItem('name') || null,
-    email: localStorage.getItem('email') || null,
+    token: localStorage.getItem('token') || null, // Store token as a string
+    user: null,
   },
   reducers: {
-    login: (state, action) => {
-      state.token = action.payload.token;
-      state.role = action.payload.role;
-      state.userId = action.payload.userId || null;
-      state.name = action.payload.name || null;
-      state.email = action.payload.email || null;
-      localStorage.setItem('token', state.token);
-      localStorage.setItem('role', state.role);
-      localStorage.setItem('userId', state.userId || '');
-      localStorage.setItem('name', state.name || '');
-      localStorage.setItem('email', state.email || '');
+    setCredentials: (state, action) => {
+      const { token, user } = action.payload;
+      state.token = token;
+      state.user = user;
+      if (token) localStorage.setItem('token', token); // Persist token
     },
     logout: (state) => {
       state.token = null;
-      state.role = null;
-      state.userId = null;
-      state.name = null;
-      state.email = null;
+      state.user = null;
       localStorage.removeItem('token');
-      localStorage.removeItem('role');
-      localStorage.removeItem('userId');
-      localStorage.removeItem('name');
-      localStorage.removeItem('email');
-    },
-    updateProfile: (state, action) => {
-      state.name = action.payload.name || state.name;
-      state.email = action.payload.email || state.email;
-      localStorage.setItem('name', state.name);
-      localStorage.setItem('email', state.email);
     },
   },
 });
 
-export const { login, logout, updateProfile } = authSlice.actions;
+export const { setCredentials, logout } = authSlice.actions;
 export default authSlice.reducer;

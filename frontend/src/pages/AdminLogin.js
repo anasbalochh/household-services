@@ -1,107 +1,41 @@
 import React, { useState } from 'react';
-import { Typography, Container, TextField, Button, Alert, Box, Link } from '@mui/material';
+import { Container, TextField, Button, Typography, Alert } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
+import { useDispatch } from 'react-redux';
+import { setCredentials } from '../redux/authSlice';
 
 const AdminLogin = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [message, setMessage] = useState('');
   const [error, setError] = useState('');
   const navigate = useNavigate();
+  const dispatch = useDispatch();
 
-  const handleSubmit = async (e) => {
-    e.preventDefault(); // Explicitly prevent default GET navigation
+  const handleLogin = async (e) => {
+    e.preventDefault();
     try {
-      const response = await axios.post('http://localhost:5000/api/auth/login', {
-        email,
-        password,
-      }, {
-        headers: { 'Content-Type': 'application/json' },
-      });
-      const { token } = response.data;
+      const response = await axios.post('http://localhost:5000/api/auth/login', { email, password });
+      const { token, role } = response.data;
+      dispatch(setCredentials({ token }));
       localStorage.setItem('token', token);
-      setError('');
-      setMessage('Admin login successful! Redirecting...');
-      setTimeout(() => {
-        setMessage('');
-        navigate('/admin-dashboard');
-      }, 2000);
+      if (role === 'admin') navigate('/admin-dashboard');
+      else setError('Admin access only');
     } catch (err) {
-      console.error('Login Error:', err.response ? err.response.data : err.message);
-      setMessage('');
-      setError(`Login failed: ${err.response ? err.response.data.message : err.message}`);
+      console.error('Login Error:', err.response?.data || err.message);
+      setError(err.response?.data?.message || 'Login failed');
     }
-  };
-
-  const handleForgotPassword = () => {
-    navigate('/forgot-password');
   };
 
   return (
     <Container maxWidth="xs" sx={{ mt: 8 }}>
-      <Box
-        sx={{
-          display: 'flex',
-          flexDirection: 'column',
-          alignItems: 'center',
-          p: 3,
-          borderRadius: 2,
-          boxShadow: 1,
-          bgcolor: 'background.paper',
-        }}
-      >
-        <Typography variant="h5" gutterBottom>
-          Admin Login
-        </Typography>
-        <Box component="form" onSubmit={handleSubmit} sx={{ mt: 2, width: '100%' }}>
-          <TextField
-            fullWidth
-            label="Email Address"
-            type="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            margin="normal"
-            required
-          />
-          <TextField
-            fullWidth
-            label="Password"
-            type="password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            margin="normal"
-            required
-          />
-          {message && <Alert severity="success" sx={{ mt: 2 }}>{message}</Alert>}
-          {error && <Alert severity="error" sx={{ mt: 2 }}>{error}</Alert>}
-          <Button
-            type="submit"
-            fullWidth
-            variant="contained"
-            color="primary"
-            sx={{ mt: 3, mb: 2 }}
-          >
-            Login
-          </Button>
-          <Link
-            component="button"
-            variant="body2"
-            onClick={handleForgotPassword}
-            sx={{ mb: 2, textAlign: 'center', display: 'block' }}
-          >
-            Forgot Password?
-          </Link>
-          <Button
-            fullWidth
-            variant="text"
-            onClick={() => navigate('/')}
-            sx={{ mb: 2 }}
-          >
-            Back to Home
-          </Button>
-        </Box>
-      </Box>
+      <Typography variant="h4" gutterBottom>Admin Login</Typography>
+      {error && <Alert severity="error" sx={{ mb: 2 }}>{error}</Alert>}
+      <form onSubmit={handleLogin}>
+        <TextField label="Email" value={email} onChange={(e) => setEmail(e.target.value)} fullWidth sx={{ mb: 2 }} />
+        <TextField label="Password" type="password" value={password} onChange={(e) => setPassword(e.target.value)} fullWidth sx={{ mb: 2 }} />
+        <Button type="submit" variant="contained" fullWidth>Login</Button>
+      </form>
     </Container>
   );
 };
