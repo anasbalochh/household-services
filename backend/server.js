@@ -6,7 +6,6 @@ const authRoutes = require('./routes/authRoutes');
 const serviceRoutes = require('./routes/serviceRoutes');
 
 dotenv.config();
-
 const app = express();
 
 app.use(cors({
