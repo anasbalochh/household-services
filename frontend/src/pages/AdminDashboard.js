@@ -165,7 +165,10 @@ const AdminDashboard = () => {
     navigate('/login');
   };
 
-  const filteredUsers = users.filter(user => user.name?.toLowerCase().includes(search.toLowerCase()) || '');
+  const filteredUsers = users.filter(u =>
+  ((u.name || u.email || '').toLowerCase()).includes((search || '').toLowerCase())
+);
+
 
   return (
     <Container maxWidth="lg" sx={{ mt: 4 }}>
@@ -293,7 +296,7 @@ const AdminDashboard = () => {
                     bookings.map(booking => (
                       <TableRow key={booking._id}>
                         <TableCell>{booking.customerId?.name || 'N/A'}</TableCell>
-                        <TableCell>{booking.serviceId?.title || 'N/A'}</TableCell>
+                        <TableCell>{booking.serviceId?.name || 'N/A'}</TableCell>
                         <TableCell>{booking.date || 'N/A'}</TableCell>
                         <TableCell>{booking.status}</TableCell>
                         <TableCell>

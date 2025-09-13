@@ -9,7 +9,8 @@ const Profile = () => {
   const [password, setPassword] = useState('');
   const [profilePic, setProfilePic] = useState(''); // Mock for upload
   const [message, setMessage] = useState('');
-  const [error, setError] = useState('');
+  // eslint-disable-next-line no-unused-vars
+  const [setError] = useState(''); // eslint-disable-line no-unused-vars
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -62,7 +63,6 @@ const Profile = () => {
           margin="normal"
         />
         {message && <Alert severity="success" sx={{ mt: 2 }}>{message}</Alert>}
-        {error && <Alert severity="error" sx={{ mt: 2 }}>{error}</Alert>}
         <Button type="submit" variant="contained" color="primary" fullWidth sx={{ mt: 3 }}>
           Update Profile
         </Button>

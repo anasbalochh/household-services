@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Container, TextField, Button, Typography, Alert, Box } from '@mui/material'; // Added Box
+import { Container, TextField, Button, Typography, Alert, Box } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { useDispatch } from 'react-redux';
@@ -17,14 +17,16 @@ const Login = () => {
     try {
       const response = await axios.post('http://localhost:5000/api/auth/login', { email, password });
       const { token, role } = response.data;
-      dispatch(setCredentials({ token }));
-      localStorage.setItem('token', token);
+      dispatch(setCredentials({ token, role })); // Store role too
+      localStorage.setItem('token', token); // Store token
+      console.log('Token stored:', token.substring(0, 20) + '...'); // Debug log
       if (role === 'admin') navigate('/admin-dashboard');
       else if (role === 'customer') navigate('/customer-dashboard');
       else if (role === 'vendor') navigate('/vendor-dashboard');
       else navigate('/');
     } catch (err) {
       setError(err.response?.data?.message || 'Login failed');
+      console.error('Login Error:', err.response?.data || err);
     }
   };
 
